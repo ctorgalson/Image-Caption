@@ -1,6 +1,7 @@
 (function($) {
   /**
-   * Replaces the selected image(s) with a div containing:
+   * Replaces each selected image that contains a title attribute with a div
+   * containing:
    *
    *  --  the original image (including the link, if any, it was wrapped in),
    *      wrapped in configurable html element,
