@@ -87,7 +87,6 @@
         var $current = $(e) // current element with certain attributes ruthlessly removed...
               .removeAttr('align')
               .removeAttr('border')
-              .removeAttr('class')
               .removeAttr('style'),
             $parent = $current.parent(), // current element's parent...
             $replace = $parent.is('a') ? $parent : $current, // current element plus its parent if and only if the parent is a link...
@@ -97,6 +96,8 @@
               .addClass($replaceParent.attr('class'))
               .append($(settings.imageWrapper).html($replace.clone()))
               .append($(settings.captionWrapper).text($current.attr('title')));
+        // Remove classes from the image:
+        $current.removeAttr('class');
         // Find out if we're inside a 'p'--this will often happen in wysiwyg
         // environments--if we are, then we want to replace THAT too:
         if ($replaceParent.is('p')) {
