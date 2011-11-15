@@ -53,7 +53,7 @@
    *        The original markup will be replaced by:
    *
    *        <div class="foobar">
-   *          <div class="re-imagecaption-caption image-foo p-foo">
+   *          <div class="re-imagecaption-wrapper image-foo p-foo">
    *            <div class="re-imagecaption-image">
    *              <a href="/foo/">
    *                <img alt="Image of foo"
@@ -74,9 +74,9 @@
   $.fn.imageCaption = function(options) {  
     // Create some defaults, extending them with any options that were provided
     var settings = $.extend( {
-      captionContainer: ('<div class="re-imagecaption-caption" />'),
+      captionContainer: ('<div class="re-imagecaption-wrapper" />'),
       imageWrapper: ('<div class="re-imagecaption-image" />'),
-      captionWrapper: ('<div class="re-imagecaption-wrapper" />')
+      captionWrapper: ('<div class="re-imagecaption-caption" />')
     }, options);
     // Get to the business of caption-building:
     return this.each(function(i,e) {  
@@ -97,7 +97,7 @@
               .append($(settings.imageWrapper).html($replace.clone()))
               .append($(settings.captionWrapper).text($current.attr('title')));
         // Remove classes from the image:
-        $current.removeAttr('class');
+        $caption.find('img').removeAttr('class');
         // Find out if we're inside a 'p'--this will often happen in wysiwyg
         // environments--if we are, then we want to replace THAT too:
         if ($replaceParent.is('p')) {
