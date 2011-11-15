@@ -8,9 +8,9 @@
    *  --  the title of the original image wrapped in a configurable html
    *      element.
    *
-   * The replacement div receives the classes of the original image, plus those
-   * of any parent p element, but the align, border, class and style attributes
-   * are removed from the image itself.
+   * The replacement div receives the classes of the original image, but the
+   * align, border, class and style attributes are removed from the image
+   * itself.
    *
    * @author Christopher Torgalson <bedlamhotel@gmail.com>
    * @param options overrides
@@ -26,6 +26,11 @@
    *          --  (string) captionWrapper
    *              jQuery-ready string for creating a new element to contain the
    *              above two elements
+   *
+   *        Any of the elements provided in settingsshould probably be inline
+   *        elements such as span since the img element or its parent link may
+   *        be contained in a <p> or other element that may not contain block-
+   *        level elements.
    *
    * @example
    *        Given the following HTML:
@@ -53,30 +58,32 @@
    *        The original markup will be replaced by:
    *
    *        <div class="foobar">
-   *          <div class="re-imagecaption-wrapper image-foo p-foo">
-   *            <div class="re-imagecaption-image">
-   *              <a href="/foo/">
-   *                <img alt="Image of foo"
-   *                   height="100"
-   *                   src="/foo/img/foo.jpg"
-   *                   title="This is a picture of foo"
-   *                   width="100"/>
-   *              </a>
-   *            </div>
-   *            <div class="re-imagecaption-caption">
-   *              This is a picture of foo
-   *            </div>
-   *          </div>
+   *          <p class="p-foo">
+   *            <span class="re-imagecaption-wrapper image-foo">
+   *              <span class="re-imagecaption-image">
+   *                <a href="/foo/">
+   *                  <img alt="Image of foo"
+   *                       height="100"
+   *                       src="/foo/img/foo.jpg"
+   *                       title="This is a picture of foo"
+   *                       width="100"/>
+   *                </a>
+   *              </span>
+   *              <span class="re-imagecaption-caption">
+   *                This is a picture of foo
+   *              </span>
+   *            </span>
+   *          </p>
    *        </div>
    *
-   * @version 1.0
+   * @version 1.1
    */
   $.fn.imageCaption = function(options) {  
     // Create some defaults, extending them with any options that were provided
     var settings = $.extend( {
-      captionContainer: ('<div class="re-imagecaption-wrapper" />'),
-      imageWrapper: ('<div class="re-imagecaption-image" />'),
-      captionWrapper: ('<div class="re-imagecaption-caption" />')
+      captionContainer: ('<span class="re-imagecaption-wrapper" />'),
+      imageWrapper: ('<span class="re-imagecaption-image" />'),
+      captionWrapper: ('<span class="re-imagecaption-caption" />')
     }, options);
     // Get to the business of caption-building:
     return this.each(function(i,e) {  
@@ -89,25 +96,15 @@
               .removeAttr('border')
               .removeAttr('style'),
             $parent = $current.parent(), // current element's parent...
-            $replace = $parent.is('a') ? $parent : $current, // current element plus its parent if and only if the parent is a link...
-            $replaceParent = $replace.parent(), // the parent of whatever we've decided to replace...
+            $replace = $parent.is('a') ? $parent : $current, // current element plus its parent if and only if the parent is a link...            
             $caption = $(settings.captionContainer) // create new caption element and add the image (plus link) and caption into it...
               .addClass($current.attr('class'))
-              .addClass($replaceParent.attr('class'))
               .append($(settings.imageWrapper).html($replace.clone()))
               .append($(settings.captionWrapper).text($current.attr('title')));
         // Remove classes from the image:
         $caption.find('img').removeAttr('class');
-        // Find out if we're inside a 'p'--this will often happen in wysiwyg
-        // environments--if we are, then we want to replace THAT too:
-        if ($replaceParent.is('p')) {
-          $replaceParent.replaceWith($caption);
-        }
-        // But otherwise, it's ok just to replace the image (including the parent
-        // link if any):
-        else {
-          $replace.replaceWith($caption);
-        }
+        // Replace the original with the replacement:
+        $replace.replaceWith($caption);
       }  
     });
   }; /* $.fn.imageCaption */
