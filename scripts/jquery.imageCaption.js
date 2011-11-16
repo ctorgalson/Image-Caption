@@ -81,7 +81,7 @@
    *          </p>
    *        </span>
    *
-   * @version 1.2
+   * @version 1.4
    */
   $.fn.imageCaption = function(options) {  
     // Create some defaults, extending them with any options that were provided
@@ -94,27 +94,34 @@
     return this.each(function(i,e) {
       // Find out if we have to do anything at all--this whole operation is
       // completely pointless if we have no image title!      
-      if ($(e).attr('title') != '') {
+      if ($(e).attr('title') !== '') {
         // Define the various objects we need to work with:
-        var $current = $(e) // current element with certain attributes ruthlessly removed...
-              .removeAttr('align')
-              .removeAttr('border')
-              .removeAttr('style');
+        var $current = $(e), // current element with certain attributes ruthlessly removed...
             $width = $current.width(),
             $parent = $current.parent(), // current element's parent...
             $replace = $parent.is('a') ? $parent : $current, // current element plus its parent if and only if the parent is a link...            
             $caption = $(settings.captionContainer) // create new caption element and add the image (plus link) and caption into it...
               .addClass($current.attr('class'))
               .append($(settings.imageWrapper).html($replace.clone()))
-              .append($(settings.captionWrapper).text($current.attr('title')))
-              .find('img') // Once we've put it together, find the image and strip its classes...
-              .removeAttr('class')
-              .parents('.re-imagecaption-wrapper'); // Get the collection back to the appropriate state...
+              .append($(settings.captionWrapper).text($current.attr('title')));     
         // Add width to caption if we have it (and if you don't have it, you'll
-        // want it, so make sure your editor/tool provides width and height!):
+        // want it, so make sure your editor/tool/user provides width and
+        // height!).
+        //
+        // We do this in a conditional to avoid accidentally assigning a width
+        // of zero which is very hard to deal with in CSS:
         if ($width > 0) {
           $caption.width($width);
         }
+        // Once we've put it together, given it a height etc, find the image and
+        //strip its classes etc:
+        $caption
+          .find('img')
+          .removeAttr('class')
+          .removeAttr('align')
+          .removeAttr('border')
+          .removeAttr('style')
+          .parents('.re-imagecaption-wrapper'); // Get the collection back to the appropriate state for chaining...
         // Replace the original with the replacement:
         $replace.replaceWith($caption);
       }  
