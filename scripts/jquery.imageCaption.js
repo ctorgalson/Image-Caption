@@ -94,7 +94,8 @@
     return this.each(function(i,e) {
       // Find out if we have to do anything at all--this whole operation is
       // completely pointless if we have no image title!      
-      if ($(e).attr('title') !== '') {
+      var $imgs = $(e).attr('title');
+      if ( $imgs !== '' && typeof $imgs != "undefined" ) { 
         // Define the various objects we need to work with:
         var $current = $(e), // current element with certain attributes ruthlessly removed...
             $width = $current.width(),
